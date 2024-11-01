@@ -527,9 +527,28 @@ input:checked + .slider:before {
         right: 10px;
     }
 
+    .nav-dots li {
+        margin: 15px 0;
+    }
+
+    .nav-dots a {
+        padding: 15px;
+    }
+
     .dot {
-        width: 8px;
-        height: 8px;
+        width: 12px;
+        height: 12px;
+        transition: transform 0.3s ease;
+    }
+
+    .nav-dots a:active .dot {
+        transform: scale(1.2);
+    }
+
+    .label {
+        background: rgba(0, 0, 0, 0.8);
+        padding: 5px 10px;
+        border-radius: 4px;
     }
 
     .menu-overlay .menu-titles h2 {
@@ -551,6 +570,85 @@ input:checked + .slider:before {
     .menu-titles h2 {
         margin: clamp(0.8rem, 3vh, 1.5rem) 0;
         font-size: clamp(1rem, 4vw, 2rem);
+    }
+
+    .horizontal-wrapper {
+        overflow: hidden;
+        touch-action: pan-y pinch-zoom; /* Mejorar el comportamiento táctil */
+    }
+
+    .horizontal-slider {
+        touch-action: pan-x pinch-zoom; /* Permitir scroll horizontal en móvil */
+    }
+
+    .panel {
+        width: 100vw;
+        flex-shrink: 0;
+    }
+
+    html, body {
+        overflow-x: hidden;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-y: none;
+    }
+
+    .section {
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
+    }
+
+    .nav-dots {
+        touch-action: manipulation;
+    }
+
+    .nav-dots a {
+        padding: 20px 15px; /* Área táctil más grande */
+    }
+
+    .section {
+        min-height: 100vh; /* Asegurar altura mínima */
+        height: 100vh; /* Forzar altura completa */
+        width: 100vw;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .horizontal-wrapper {
+        height: 100vh;
+        width: 100vw;
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* Asegurar que el contenido no cause scroll horizontal */
+    .horizontal-slider {
+        width: 400%;
+        height: 100vh;
+        position: absolute;
+        left: 0;
+        top: 0;
+    }
+
+    .panel {
+        width: 100vw;
+        height: 100vh;
+        position: relative;
+    }
+
+    /* Prevenir cualquier desbordamiento */
+    html, body {
+        overflow-x: hidden;
+        width: 100%;
+        position: relative;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-y: none;
+    }
+
+    /* Asegurar que main no cause scroll horizontal */
+    main {
+        width: 100%;
+        overflow-x: hidden;
+        position: relative;
     }
 }
 
@@ -996,7 +1094,9 @@ p, .progress-text {
 
 /* Efecto de desvanecimiento actualizado */
 .preloader.fade-out {
-    transition: visibility 0.8s;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
 }
 
 .preloader.fade-out .circle {
@@ -1046,9 +1146,32 @@ p, .progress-text {
     font-family: 'Source Code Pro', monospace;
     font-size: 1.2rem;
     color: var(--progress-default);
-    text-shadow: 0 0 5px var(--progress-default);
     letter-spacing: 0.2em;
-    animation: glitch 1s infinite;
+    animation: breathing 3s ease-in-out infinite;
+}
+
+@keyframes breathing {
+    0% {
+        text-shadow: 0 0 5px var(--progress-default),
+                     0 0 10px var(--progress-default),
+                     0 0 20px var(--progress-default);
+        opacity: 0.7;
+        transform: scale(1);
+    }
+    50% {
+        text-shadow: 0 0 10px var(--progress-default),
+                     0 0 20px var(--progress-default),
+                     0 0 30px var(--progress-default);
+        opacity: 1;
+        transform: scale(1.05);
+    }
+    100% {
+        text-shadow: 0 0 5px var(--progress-default),
+                     0 0 10px var(--progress-default),
+                     0 0 20px var(--progress-default);
+        opacity: 0.7;
+        transform: scale(1);
+    }
 }
 
 .loading-bar-container {
@@ -1067,8 +1190,13 @@ p, .progress-text {
     position: absolute;
     left: 0;
     top: 0;
-    animation: loadProgress 2s ease-in-out infinite;
+    transition: width 0.5s ease;
     box-shadow: 0 0 10px var(--progress-default);
+}
+
+@keyframes loadProgress {
+    0% { width: 0%; }
+    100% { width: 100%; }
 }
 
 /* Asegurar que el contenedor principal se desvanezca al final */
@@ -1081,5 +1209,58 @@ p, .progress-text {
     to {
         opacity: 0;
         visibility: hidden;
+    }
+}
+
+@keyframes glitch {
+    0% {
+        text-shadow: 2px 2px 0 #00f2ff6e, -2px -2px 0 #0002868f;
+    }
+    20% {
+        text-shadow: -2px -2px 0 #00f2ff6e, 2px 2px 0 #0002868f;
+    }
+    40% {
+        text-shadow: 2px -2px 0 #00f2ff6e, -2px 2px 0 #0002868f;
+    }
+    60% {
+        text-shadow: -2px 2px 0 #00f2ff6e, 2px -2px 0 #0002868f;
+    }
+    80% {
+        text-shadow: 2px 2px 0 #00f2ff6e, -2px -2px 0 #0002868f;
+    }
+    100% {
+        text-shadow: -2px -2px 0 #00f2ff6e, 2px 2px 0 #0002868f;
+    }
+}
+
+.glitch-text.scramble-text {
+    font-family: 'Source Code Pro', monospace !important;
+    font-size: 1rem;
+    color: var(--progress-default);
+    letter-spacing: 0em;
+    animation: breathing 3s ease-in-out infinite;
+}
+
+@keyframes breathing {
+    0% {
+        text-shadow: 0 0 5px var(--progress-default),
+                     0 0 10px var(--progress-default),
+                     0 0 20px var(--progress-default);
+        opacity: 0.7;
+        transform: scale(1);
+    }
+    50% {
+        text-shadow: 0 0 10px var(--progress-default),
+                     0 0 20px var(--progress-default),
+                     0 0 30px var(--progress-default);
+        opacity: 1;
+        transform: scale(1.05);
+    }
+    100% {
+        text-shadow: 0 0 5px var(--progress-default),
+                     0 0 10px var(--progress-default),
+                     0 0 20px var(--progress-default);
+        opacity: 0.7;
+        transform: scale(1);
     }
 }

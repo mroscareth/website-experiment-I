@@ -23,7 +23,7 @@ function initThemeSwitch() {
  * Scramble animation for specified text elements
  */
 function initScrambleText() {
-    const scrambleTexts = document.querySelectorAll('.scramble-text');
+    const scrambleTexts = document.querySelectorAll('.scramble-text:not(.preloader .scramble-text)');
     if (!scrambleTexts.length) return;
 
     const chars = "⌰⍜⋏☌ ⌰⟟⎐⟒ ⏁⊑⟒ ⟒⏁⊑⟒⍀⟒⏃⋏ ⟒⋔⌿⟟⍀⟒";
@@ -89,55 +89,81 @@ function initScrambleText() {
  * Handles smooth scrolling and section detection
  */
 function initNavigation() {
-    // Smooth scroll navigation
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    console.log('Is Mobile:', isMobile);
+
     document.querySelectorAll('.nav-dots a').forEach(link => {
         link.addEventListener('click', (e) => {
             e.preventDefault();
             const targetId = link.getAttribute('href');
             const target = document.querySelector(targetId);
             
+            console.log('Click detected on:', targetId);
+            
             if (target) {
+                // Calcular la posición exacta de la sección objetivo
+                const rect = target.getBoundingClientRect();
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                const targetPosition = scrollTop + rect.top;
+                
+                console.log('Target rect:', rect);
+                console.log('Current scroll:', scrollTop);
+                console.log('Calculated target position:', targetPosition);
+
+                // Asegurarse de que la posición objetivo sea válida
+                const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+                const finalPosition = Math.min(targetPosition, maxScroll);
+                
+                console.log('Max scroll possible:', maxScroll);
+                console.log('Final scroll position:', finalPosition);
+
+                // Usar GSAP con valores absolutos
                 gsap.to(window, {
-                    duration: 1.5,
+                    duration: 1,
                     scrollTo: {
-                        y: target,
-                        autoKill: true
+                        y: finalPosition,
+                        autoKill: false
                     },
-                    ease: "power2.inOut",
+                    ease: "power2.out",
+                    onStart: () => {
+                        console.log('Starting scroll to position:', finalPosition);
+                    },
+                    onUpdate: () => {
+                        console.log('Current scroll position:', window.pageYOffset);
+                    },
                     onComplete: () => {
-                        if (target.classList.contains('horizontal-wrapper')) {
-                            const st = ScrollTrigger.getAll().find(st => st.trigger === target);
-                            if (st) {
-                                st.scroll(st.start);
-                                st.update();
-                            }
+                        console.log('Scroll complete. Final position:', window.pageYOffset);
+                        // Verificar si llegamos donde debíamos
+                        const currentPosition = window.pageYOffset;
+                        const difference = Math.abs(currentPosition - finalPosition);
+                        
+                        if (difference > 10) {
+                            console.log('Position mismatch. Correcting...');
+                            // Intentar corregir con scroll nativo como respaldo
+                            window.scrollTo(0, finalPosition);
                         }
+                        
+                        updateActiveNav(targetId.replace('#', ''));
                     }
                 });
             }
         });
     });
 
-    // Section detection
+    // Configuración de ScrollTrigger para la detección de secciones
+    ScrollTrigger.config({
+        tolerance: 10,
+        ignoreMobileResize: true
+    });
+
     document.querySelectorAll('section[id]').forEach(section => {
         ScrollTrigger.create({
             trigger: section,
-            start: "top 50%",
-            end: "bottom 50%",
+            start: "top center",
+            end: "bottom center",
             onEnter: () => updateActiveNav(section.id),
             onEnterBack: () => updateActiveNav(section.id),
-            onLeave: () => {
-                const nextSection = section.nextElementSibling;
-                if (nextSection && nextSection.id) {
-                    updateActiveNav(nextSection.id);
-                }
-            },
-            onLeaveBack: () => {
-                const prevSection = section.previousElementSibling;
-                if (prevSection && prevSection.id) {
-                    updateActiveNav(prevSection.id);
-                }
-            }
+            markers: false
         });
     });
 }
@@ -248,7 +274,7 @@ function initMenuToggle() {
                 duration: 0.1, // Reducir duración para que desaparezcan más rápido
                 opacity: 0,
                 filter: "blur(10px)",
-                stagger: 0.05, // Reducir el stagger para que desaparezcan más rápido
+                stagger: 0.05, // Reducir el stagger para que desaparezcan más r��pido
                 ease: "power4.in"
             });
 
@@ -511,4 +537,70 @@ document.addEventListener('visibilitychange', () => {
         animateLogo();
     }
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+    const preloader = document.querySelector('.preloader');
+
+    window.addEventListener('load', () => {
+        setTimeout(() => {
+            preloader.classList.add('fade-out');
+        }, 2000);
+    });
+});
+
+// Al inicio del archivo
+(function() {
+    function initPreloaderScramble() {
+        const preloaderText = document.querySelector('.preloader .scramble-text');
+        if (!preloaderText) return;
+
+        const chars = "⌰⍜⋏☌ ⌰⟟⎐⟒ ⏁⊑⟒ ⟒⏁⊑⟒⍀⟒⏃⋏ ⟒⋔⌿⟟⍀⟒";
+        
+        function scramble(element, iteration = 0) {
+            element.classList.remove('initially-hidden');
+            element.style.opacity = '1';
+            element.style.visibility = 'visible';
+            
+            const originalText = element.getAttribute('data-original') || element.textContent;
+            if (!element.getAttribute('data-original')) {
+                element.setAttribute('data-original', originalText);
+            }
+            
+            const currentText = originalText
+                .split("")
+                .map((char, index) => index < iteration ? char : 
+                    chars[Math.floor(Math.random() * chars.length)])
+                .join("");
+            
+            element.textContent = currentText;
+            
+            if (iteration >= originalText.length) {
+                return true;
+            }
+            return false;
+        }
+
+        let iteration = 0;
+        const interval = setInterval(() => {
+            if (scramble(preloaderText, iteration)) {
+                clearInterval(interval);
+            }
+            iteration += 1/2;
+        }, 20);
+    }
+
+    // Observar cuando el preloader se añade al DOM
+    const observer = new MutationObserver((mutations, obs) => {
+        const preloader = document.querySelector('.preloader .scramble-text');
+        if (preloader) {
+            initPreloaderScramble();
+            obs.disconnect(); // Dejar de observar una vez que se encuentra
+        }
+    });
+
+    observer.observe(document.documentElement, {
+        childList: true,
+        subtree: true
+    });
+})();
 
