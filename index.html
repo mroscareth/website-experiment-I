@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Horizontal Scroll</title>
+    
+    <!-- PWA Support -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#000000">
+
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registration successful');
+                    })
+                    .catch(err => {
+                        console.log('ServiceWorker registration failed: ', err);
+                    });
+            });
+        }
+    </script>
+
+    <!-- Existing Links -->
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrambleTextPlugin.min.js"></script>
+</head>
+<body>
+    <!-- NAV -->
+    <nav class="nav-dots">
+        <ul>
+            <li><a href="#horizontal-section">
+                <span class="dot"></span>
+                <span class="label"><p>The Etherean Empire</p></span>
+            </a></li>
+            <li><a href="#section2">
+                <span class="dot"></span>
+                <span class="label"><p>Section 2</p></span>
+            </a></li>
+            <li><a href="#section3">
+                <span class="dot"></span>
+                <span class="label"><p>Section 3</p></span>
+            </a></li>
+            <li><a href="#section4">
+                <span class="dot"></span>
+                <span class="label"><p>Section 4</p></span>
+            </a></li>
+            <li><a href="#section5">
+                <span class="dot"></span>
+                <span class="label"><p>Section 5</p></span>
+            </a></li>
+        </ul>
+    </nav>
+
+    <!-- UI CONTROLS -->
+    <div class="theme-switch-wrapper">
+        <label class="theme-switch" for="checkbox">
+            <input type="checkbox" id="checkbox" />
+            <div class="slider round"></div>
+        </label>
+    </div>
+
+    <div class="progress-wrapper">
+        <div class="progress-container">
+            <div class="progress-bar"></div>
+            <div class="progress-flags"></div>
+        </div>
+    </div>
+
+    <button class="hamburger-menu">
+        <span class="line line1"></span>
+        <span class="line line2"></span>
+        <span class="line line3"></span>
+    </button>
+
+    <!-- MENU -->
+    <div class="menu-overlay">
+        <div class="menu-content">
+            <div class="menu-titles">
+                <h1><a href="#basecamp">BASECAMP</a></h1>
+                <h1><a href="#section2">PRINT YOUR ETHEREAN</a></h1>
+                <h1><a href="#section3">MORE STUFF</a></h1>
+                <h1><a href="#basecamp">MORE STUFF</a></h1>
+                <h1><a href="#section2">MORE STUFF</a></h1>
+                <h1><a href="#section3">MORE STUFF</a></h1>
+                <h1><a href="#basecamp">MORE STUFF</a></h1>
+                <h1><a href="#section2">MORE STUFF</a></h1>
+                <h1><a href="#section3">MORE STUFF</a></h1>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <main>
+        <!-- SECTION 1: Horizontal Scroll -->
+        <section id="horizontal-section" class="horizontal-wrapper">
+            <div class="horizontal-slider">
+                <div class="panel">
+                    <h1 class="scramble-text">LONG LIVE THE ETHEREAN EMPIRE</h1>
+                </div>
+                <div class="panel">
+                    <h1>Panel 2</h1>
+                </div>
+                <div class="panel">
+                    <h1>Panel 3</h1>
+                </div>
+                <div class="panel">
+                    <h1>Panel 4</h1>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2 -->
+        <section id="section2" class="section">
+            <h1>Section 2</h1>
+        </section>
+
+        <!-- SECTION 3 -->
+        <section id="section3" class="section">
+            <h1>Section 3</h1>
+        </section>
+
+        <!-- SECTION 4: Horizontal Scroll -->
+        <section id="section4" class="section horizontal-wrapper">
+            <div class="horizontal-slider">
+                <div class="panel">
+                    <h1>Panel 1</h1>
+                </div>
+                <div class="panel">
+                    <h1>Panel 2</h1>
+                </div>
+                <div class="panel">
+                    <h1>Panel 3</h1>
+                </div>
+                <div class="panel">
+                    <h1>Panel 4</h1>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 5 -->
+        <section id="section5" class="section">
+            <h1>Section 5</h1>
+        </section>
+    </main>
+
+    <!-- DEPENDENCIES -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
