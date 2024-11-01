@@ -3,27 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Horizontal Scroll - Descripción principal del sitio</title>
-    <meta name="description" content="Descripción detallada de tu sitio web con scroll horizontal. Incluye palabras clave relevantes.">
-    <meta name="keywords" content="scroll horizontal, diseño web, experiencia interactiva, [otras palabras clave relevantes]">
-    <meta name="author" content="[Tu nombre o empresa]">
+    <title>Horizontal Scroll - Main Site Description</title>
+    <meta name="description" content="Detailed description of your website with horizontal scroll. Include relevant keywords.">
+    <meta name="keywords" content="horizontal scroll, web design, interactive experience, [other relevant keywords]">
+    <meta name="author" content="[Your name or company]">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="[URL de tu sitio]">
+    <meta property="og:url" content="[Your site URL]">
     <meta property="og:title" content="Horizontal Scroll">
-    <meta property="og:description" content="Descripción detallada de tu sitio web con scroll horizontal.">
-    <meta property="og:image" content="[URL de la imagen preview]">
+    <meta property="og:description" content="Detailed description of your website with horizontal scroll.">
+    <meta property="og:image" content="[Preview image URL]">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="[URL de tu sitio]">
+    <meta property="twitter:url" content="[Your site URL]">
     <meta property="twitter:title" content="Horizontal Scroll">
-    <meta property="twitter:description" content="Descripción detallada de tu sitio web con scroll horizontal.">
-    <meta property="twitter:image" content="[URL de la imagen preview]">
+    <meta property="twitter:description" content="Detailed description of your website with horizontal scroll.">
+    <meta property="twitter:image" content="[Preview image URL]">
 
     <!-- Canonical URL -->
-    <link rel="canonical" href="[URL principal de tu sitio]">
+    <link rel="canonical" href="[Main site URL]">
 
     <!-- PWA Support -->
     <link rel="manifest" href="manifest.json">
@@ -33,7 +33,7 @@
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/service-worker.js')
+                navigator.serviceWorker.register('./js/service-worker.js')
                     .then(registration => {
                         console.log('ServiceWorker registration successful');
                     })
@@ -45,16 +45,54 @@
     </script>
 
     <!-- Existing Links -->
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="./css/styles.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrambleTextPlugin.min.js"></script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap" rel="stylesheet">
 </head>
 <body>
+    
+    <!-- Add after the body, before the nav -->
+    <div class="logo-container">
+        <svg class="site-logo" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 1920 438.7">
+            <defs>
+                <style>
+                    .cls-1 {
+                        fill: #fff;
+                        stroke: #fff;
+                        stroke-width: 4; /* Change this value to adjust the thickness */
+                        stroke-miterlimit: 10;
+                    }
+                </style>
+            </defs>
+            <g>
+                <g id="Layer_1">
+                    <g>
+                        <path class="cls-1" d="M5.68,424.7V13.99h164.28v79.34h-80.74v80.04h77.47v77.24h-77.47v94.04h86.11v80.04H5.68Z"/>
+                        <path class="cls-1" d="M237.64,424.7V92.87h-48.77V13.99h179.69v78.88h-48.77v331.84h-82.14Z"/>
+                        <path class="cls-1" d="M391.42,424.7V13.99h81.68v146.78h38.74V13.99h81.68v410.71h-81.68v-186.22h-38.74v186.22h-81.68Z"/>
+                        <path class="cls-1" d="M629.91,424.7V13.99h164.28v79.34h-80.74v80.04h77.47v77.24h-77.47v94.04h86.11v80.04h-169.65Z"/>
+                        <path class="cls-1" d="M826.64,424.7V13.99h126.01c21,0,36.87,4.78,47.61,14.35s17.93,22.95,21.59,40.14c3.65,17.19,5.48,37.38,5.48,60.56s-2.84,40.29-8.52,53.67c-5.68,13.38-16.38,22.64-32.09,27.77,12.91,2.65,21.97,9.06,27.19,19.25,5.21,10.19,7.82,23.38,7.82,39.55v155.42h-80.98v-160.78c0-11.98-2.45-19.41-7.35-22.29-4.9-2.88-12.8-4.32-23.69-4.32v187.39h-83.08ZM910.18,166.14h19.84c11.35,0,17.03-12.37,17.03-37.1,0-16.02-1.25-26.52-3.73-31.5-2.49-4.98-7.16-7.47-14-7.47h-19.14v76.07Z"/>
+                        <path class="cls-1" d="M1054.39,424.7V13.99h164.28v79.34h-80.74v80.04h77.47v77.24h-77.47v94.04h86.11v80.04h-169.65Z"/>
+                        <path class="cls-1" d="M1239.91,424.7l39.67-410.71h139.32l38.97,410.71h-77.71l-5.83-66.27h-49.47l-5.13,66.27h-79.81ZM1330.69,292.86h37.34l-17.97-208.86h-3.73l-15.64,208.86Z"/>
+                        <path class="cls-1" d="M1483.07,424.7V13.99h84.48l37.8,196.72V13.99h79.34v410.71h-80.27l-41.07-205.36v205.36h-80.27Z"/>
+                        <path class="cls-1" d="M1818.64,428.44c-37.49,0-64.52-9.33-81.09-28-16.57-18.67-24.85-48.38-24.85-89.14v-40.14h81.21v51.34c0,9.49,1.44,16.92,4.32,22.29,2.88,5.37,7.89,8.05,15.05,8.05s12.64-2.18,15.52-6.53c2.88-4.35,4.32-11.51,4.32-21.47,0-12.6-1.25-23.14-3.73-31.62-2.49-8.48-6.81-16.57-12.95-24.27-6.15-7.7-14.67-16.68-25.55-26.95l-36.87-35c-27.54-25.98-41.3-55.69-41.3-89.14s8.13-61.68,24.39-80.04c16.26-18.36,39.79-27.54,70.59-27.54,37.65,0,64.37,10.03,80.16,30.1,15.79,20.07,23.69,50.56,23.69,91.48h-83.54v-28.24c0-5.6-1.6-9.95-4.78-13.07-3.19-3.11-7.51-4.67-12.95-4.67-6.53,0-11.32,1.83-14.35,5.48-3.03,3.66-4.55,8.36-4.55,14.12s1.55,11.98,4.67,18.67c3.11,6.69,9.25,14.39,18.44,23.1l47.37,45.51c9.49,9.02,18.2,18.55,26.14,28.59,7.93,10.03,14.31,21.7,19.14,35,4.82,13.3,7.23,29.52,7.23,48.66,0,38.58-7.12,68.8-21.35,90.66-14.24,21.86-39.01,32.79-74.33,32.79Z"/>
+                    </g>
+                </g>
+            </g>
+        </svg>
+    </div>
+
     <!-- NAV -->
     <nav class="nav-dots">
         <ul>
             <li><a href="#horizontal-section">
                 <span class="dot"></span>
-                <span class="label"><p>The Etherean Empire</p></span>
+                <span class="label"><p>The Empire</p></span>
             </a></li>
             <li><a href="#section2">
                 <span class="dot"></span>
@@ -84,9 +122,11 @@
     </div>
 
     <div class="progress-wrapper">
+        <p class="progress-text">SCROLL TO PROGRESS</p>
         <div class="progress-container">
-            <div class="progress-bar"></div>
-            <div class="progress-flags"></div>
+            <div class="progress-bar">
+                <div class="progress-flags"></div>
+            </div>
         </div>
     </div>
 
@@ -119,7 +159,11 @@
         <section id="horizontal-section" class="horizontal-wrapper">
             <div class="horizontal-slider">
                 <div class="panel">
-                    <h1 class="scramble-text">LONG LIVE THE ETHEREAN EMPIRE</h1>
+                    <h1 class="text-center scramble-title">
+                        <span class="scramble-text line1 initially-hidden">LONG LIVE</span>
+                        <span class="scramble-text line2 initially-hidden">THE ETHEREAN</span>
+                        <span class="scramble-text line3 initially-hidden">EMPIRE</span>
+                    </h1>
                 </div>
                 <div class="panel">
                     <h1>Panel 2</h1>
@@ -171,6 +215,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js"></script>
-    <script src="script.js"></script>
+    <script src="./js/script.js"></script>
+
+    <!-- Agregar justo después del <body> -->
+    <div class="preloader">
+        <div class="preloader-content">
+            <div class="loading-bar"></div>
+            <p class="progress-text">LOADING...</p>
+        </div>
+    </div>
 </body>
 </html>

@@ -1,0 +1,1000 @@
+/* **************************************** */
+/* THEME VARIABLES */
+:root {
+    --h1-size-mobile: clamp(1.95rem, 6.5vw, 3.25rem);
+    --h2-size-mobile: clamp(1.56rem, 5.2vw, 2.6rem);
+    --p-size-mobile: clamp(0.9rem, 3vw, 1rem);
+    --completed-color: #00ddff;
+    --progress-default: #00ffff; /* Color cyan */
+    --progress-completed: #00ff00; /* Color verde */
+}
+
+:root[data-theme="light"] {
+    --bg-color: #F5F5F5;
+    --bg-color-rgb: 245, 245, 245;
+    --text-color: #2A2A2A;
+    --text-color-rgb: 42, 42, 42;
+    --dot-color: rgba(42, 42, 42, 0.5);
+    --dot-color-active: #2A2A2A;
+    --section-bg: #FFFFFF;
+    --cursor-color: #2A2A2A;
+    --cursor-opacity: 0.2;
+    --progress-border: rgba(42, 42, 42, 0.2);
+    --progress-bg: rgba(42, 42, 42, 0.1);
+    --progress-container-bg: rgba(0, 0, 0, 0.1);
+}
+
+:root[data-theme="dark"] {
+    --bg-color: #000000;
+    --bg-color-rgb: 0, 0, 0;
+    --text-color: #F5F5F5;
+    --text-color-rgb: 245, 245, 245;
+    --dot-color: rgba(245, 245, 245, 0.5);
+    --dot-color-active: #F5F5F5;
+    --section-bg: #000000;
+    --cursor-color: #F5F5F5;
+    --cursor-opacity: 0.2;
+    --progress-border: rgba(245, 245, 245, 0.2);
+    --progress-bg: rgba(245, 245, 245, 0.1);
+    --progress-container-bg: rgba(255, 255, 255, 0.1);
+}
+
+/* **************************************** */
+/* GLOBAL STYLES */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+    display: none;
+}
+
+body {
+    font-family: 'Source Code Pro', monospace;
+    background: var(--bg-color);
+    color: var(--text-color);
+    overflow-x: hidden;
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='9' viewBox='0 0 9 9'%3E%3Ccircle cx='4.5' cy='4.5' r='4.5' fill='white'/%3E%3C/svg%3E") 4.5 4.5, auto;
+}
+
+/* **************************************** */
+/* TYPOGRAPHY */
+h1, h2, span,
+h1 a,
+h2 a {
+    font-family: 'Anton', sans-serif !important;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+}
+
+h1 {
+    font-size: clamp(2.6rem, 10.4vw, 6.5rem);
+    font-weight: 900;
+    margin-bottom: 1rem;
+}
+
+h2 {
+    font-size: clamp(1.95rem, 7.8vw, 3.9rem);
+    font-weight: 700;
+    margin-bottom: 0.8rem;
+}
+
+h3 {
+    font-size: clamp(1.56rem, 5.2vw, 2.6rem);
+    font-weight: 600;
+    margin-bottom: 0.6rem;
+}
+
+p, p span {
+    font-size: clamp(1rem, 3vw, 1.2rem);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.text-small {
+    font-size: clamp(0.8rem, 2vw, 1rem);
+}
+
+.text-large {
+    font-size: clamp(1.2rem, 4vw, 1.5rem);
+}
+
+/* Todo lo demás usará Source Code Pro por defecto */
+p, span, a, button, input, label, .progress-text {
+    font-family: 'Source Code Pro', monospace;
+}
+
+/* **************************************** */
+/* Alineación de texto */
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+
+/* **************************************** */
+/* Estilos de texto */
+.text-bold { font-weight: 700; }
+.text-medium { font-weight: 500; }
+.text-light { font-weight: 300; }
+
+/* **************************************** */
+/* NAV STYLES */
+.nav-dots {
+    position: fixed;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 100;
+}
+
+.nav-dots ul {
+    list-style: none;
+}
+
+.nav-dots li {
+    margin: 20px 0;
+}
+
+.nav-dots a {
+    display: block;
+    padding: 10px;
+    text-decoration: none;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    border: 2px solid var(--dot-color);
+    border-radius: 50%;
+    display: block;
+    transition: all 0.3s ease;
+}
+
+.label {
+    position: absolute;
+    right: 25px;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 5px 10px;
+    color: var(--text-color);
+    opacity: 0;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.label p {
+    margin: 0;
+    font-size: 14px;
+}
+
+.nav-dots a.active .dot {
+    background: var(--dot-color-active);
+    transform: scale(1.2);
+    border-color: var(--dot-color-active);
+}
+
+.nav-dots a.active .label,
+.nav-dots a:hover .label {
+    opacity: 1;
+    transform: translateY(-50%) translateX(-10px);
+}
+
+/* **************************************** */
+/* UI CONTROLS */
+.theme-switch-wrapper {
+    position: fixed;
+    bottom: 30px;
+    left: 30px;
+    height: 23px;
+    z-index: 1500;
+}
+
+.controls-container {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    z-index: 1500;
+}
+
+.progress-wrapper {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 10px;
+    border: 2px solid var(--progress-border);
+    border-radius: 13px;
+    z-index: 1500;
+    backdrop-filter: blur(5px);
+    background: rgba(0, 0, 0, 0.2);
+    opacity: 0; /* Inicialmente oculto */
+}
+
+.progress-container {
+    width: 0;
+    height: 3px;
+    background: var(--progress-container-bg);
+    border-radius: 3px;
+    transform-origin: center;
+    position: relative;
+    overflow: visible;
+}
+
+@keyframes growContainer {
+    0% {
+        width: 0;
+        opacity: 0;
+    }
+    100% {
+        width: 50vw;
+        opacity: 1;
+    }
+}
+
+.progress-wrapper.animate-in .progress-container {
+    animation: growContainer 1s cubic-bezier(0.17, 0.55, 0.55, 1) forwards;
+}
+
+.theme-switch {
+    display: inline-block;
+    height: 28px;
+    width: 50px;
+    position: relative;
+}
+
+.theme-switch input {
+    display: none;
+}
+
+.slider {
+    background-color: var(--dot-color);
+    bottom: 0;
+    cursor: pointer;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    background-color: var(--bg-color);
+    bottom: 4px;
+    content: "";
+    height: 20px;
+    left: 4px;
+    position: absolute;
+    transition: .4s;
+    width: 20px;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: var(--dot-color-active);
+}
+
+input:checked + .slider:before {
+    transform: translateX(22px);
+}
+
+/* **************************************** */
+/* HAMBURGER MENU */
+.hamburger-menu {
+    position: fixed;
+    top: 30px;
+    right: 30px;
+    width: 30px;
+    height: 22px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    z-index: 2000;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.hamburger-menu .line {
+    width: 100%;
+    height: 2px;
+    background-color: var(--text-color);
+    transition: all 0.3s ease-in-out;
+    display: block;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.hamburger-menu.active .line1 {
+    transform: translateY(10px) rotate(45deg);
+}
+
+.hamburger-menu.active .line2 {
+    opacity: 0;
+}
+
+.hamburger-menu.active .line3 {
+    transform: translateY(-10px) rotate(-45deg);
+}
+
+/* **************************************** */
+/* MENU OVERLAY */
+.menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: rgba(var(--bg-color-rgb), 0.8);
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: visibility 0.5s ease;
+    overflow-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    perspective: 1000px;
+}
+
+.menu-overlay.active {
+    visibility: visible;
+}
+
+.menu-content {
+    position: relative;
+    min-height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 120px 20px;
+    transform-style: preserve-3d;
+}
+
+.menu-titles {
+    text-align: center;
+    width: min(1920px, 100%);
+    margin: 0 auto;
+}
+
+.menu-titles h1 {
+    margin: clamp(2rem, 8vh, 4rem) 0;
+    text-align: center;
+    line-height: 1.2;
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
+    position: relative;
+    cursor: pointer;
+    opacity: 0;
+    transform: translateY(50px) rotateX(-45deg);
+    filter: blur(10px);
+}
+
+.menu-titles h1:hover {
+    transform: scale(1.1) translateZ(50px) !important;
+}
+
+/* **************************************** */
+/* Ajustar el primer h1 para que no tenga tanto espacio arriba */
+.menu-titles h1:first-child {
+    margin-top: 0;
+}
+
+/* **************************************** */
+/* Ajustar el último h1 para que no tenga tanto espacio abajo */
+.menu-titles h1:last-child {
+    margin-bottom: 0;
+}
+
+.menu-titles a {
+    color: var(--text-color);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.menu-titles a:hover {
+    opacity: 0.7;
+}
+
+/* **************************************** */
+/* Ajuste para móviles */
+@media (max-width: 960px) {
+    .menu-titles {
+        min-width: 100%;
+        padding: 0 20px;
+    }
+}
+
+/* **************************************** */
+/* MAIN CONTENT */
+.section {
+    width: 100vw;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: var(--section-bg);
+    overflow: hidden;
+}
+
+.horizontal-section {
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+}
+
+.horizontal-wrapper {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.horizontal-wrapper::-webkit-scrollbar {
+    display: none;
+}
+
+.horizontal-slider {
+    display: flex;
+    width: 400%;
+    height: 100vh;
+    position: absolute;
+    left: 0;
+    top: 0;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.horizontal-slider::-webkit-scrollbar {
+    display: none;
+}
+
+.panel {
+    width: 100vw;
+    height: 100vh;
+    flex-shrink: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.panel h1 {
+    font-size: clamp(2.6rem, 10.4vw, 6.5rem);
+    font-weight: 900;
+}
+
+/* **************************************** */
+/* CURSOR */
+.cursor-dot {
+    width: 8px;
+    height: 8px;
+    background-color: var(--text-color);
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    border-radius: 50%;
+    z-index: 9999;
+    transform: translate(-4px, -4px);
+  
+}
+
+.cursor-circle {
+    width: 40px;
+    height: 40px;
+    border: 2px solid var(--text-color);
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    border-radius: 50%;
+    z-index: 9998;
+    transform: translate(-20px, -20px);
+    transition: transform 0.2s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.cursor-circle.hover {
+    transform: translate(-30px, -30px) scale(1.5);
+}
+
+/* **************************************** */
+/* MEDIA QUERIES */
+@media (max-width: 768px) {
+    h1 { font-size: var(--h1-size-mobile); }
+    h2 { font-size: var(--h2-size-mobile); }
+    p { font-size: var(--p-size-mobile); }
+
+    .nav-dots {
+        right: 10px;
+    }
+
+    .dot {
+        width: 8px;
+        height: 8px;
+    }
+
+    .menu-overlay .menu-titles h2 {
+        margin: 1.5rem 0;
+    }
+
+    .progress-flag {
+        height: 15px;
+    }
+
+    .horizontal-slider .panel {
+        padding: 0 2rem;
+    }
+
+    .menu-content {
+        padding: 100px 15px;
+    }
+
+    .menu-titles h2 {
+        margin: clamp(0.8rem, 3vh, 1.5rem) 0;
+        font-size: clamp(1rem, 4vw, 2rem);
+    }
+}
+
+@media (max-width: 480px) {
+    .label {
+        display: none;
+    }
+
+    .theme-switch-wrapper {
+        bottom: 30px;
+        left: 30px;
+        transform: scale(0.8);
+    }
+
+    .hamburger-menu {
+        top: 15px;
+        right: 15px;
+        transform: scale(0.8);
+    }
+
+    .menu-titles h2 {
+        font-size: 1.5rem;
+        margin: 1rem 0;
+    }
+
+    .panel {
+        padding: 1rem;
+    }
+}
+
+@media (max-height: 480px) and (orientation: landscape) {
+    .horizontal-slider {
+        height: 100vh;
+    }
+
+    .panel {
+        padding: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    h1 {
+        font-size: var(--h1-size-mobile);
+    }
+}
+
+@media (hover: none) {
+    .nav-dots a:hover .label,
+    .progress-flag:hover::after {
+        display: none;
+    }
+
+    .cursor-dot,
+    .cursor-circle {
+        display: none;
+    }
+    
+    * {
+        cursor: auto !important;
+    }
+    
+    a, button, input, .hamburger-menu, .theme-switch {
+        cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='9' viewBox='0 0 9 9'%3E%3Ccircle cx='4.5' cy='4.5' r='4.5' fill='white'/%3E%3C/svg%3E") 4.5 4.5, pointer !important;
+    }
+}
+
+/* **************************************** */
+/* PROGRESS BAR */
+.progress-container {
+    width: 0;
+    height: 3px;
+    background: var(--progress-container-bg);
+    border-radius: 3px;
+    transform-origin: center;
+    position: relative;
+    overflow: visible;
+}
+
+@keyframes growContainer {
+    0% {
+        width: 0;
+        opacity: 0;
+    }
+    100% {
+        width: 50vw;
+        opacity: 1;
+    }
+}
+
+.progress-wrapper.animate-in .progress-container {
+    animation: growContainer 1s cubic-bezier(0.17, 0.55, 0.55, 1) forwards;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 0;
+    background-color: var(--progress-default);
+    transition: background-color 0.5s ease;
+    border-radius: 3px;
+    position: relative;
+}
+
+.progress-bar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 3px;
+    filter: brightness(1.2);
+    transition: all 0.5s ease;
+    pointer-events: none;
+    box-shadow: 
+        inset 0 0 10px var(--progress-default),
+        inset 0 0 20px var(--progress-default),
+        0 0 20px var(--progress-default),
+        0 0 35px var(--progress-default),
+        0 0 50px var(--progress-default),
+        0 0 75px var(--progress-default),
+        0 0 100px var(--progress-default);
+}
+
+.progress-bar.completed {
+    background-color: var(--progress-completed);
+}
+
+.progress-bar.completed::after {
+    box-shadow: 
+        inset 0 0 10px var(--progress-completed),
+        inset 0 0 20px var(--progress-completed),
+        0 0 20px var(--progress-completed),
+        0 0 35px var(--progress-completed),
+        0 0 50px var(--progress-completed),
+        0 0 75px var(--progress-completed),
+        0 0 100px var(--progress-completed);
+}
+
+/* **************************************** */
+/* Añadir cerca de los estilos de Typography */
+h1 .line1,
+h1 .line2,
+h1 .line3 {
+    display: block;
+    line-height: 1;
+    text-align: center;
+}
+
+h1 .line2 {
+    margin-top: 0.2em;
+}
+
+h1 .line3 {
+    margin-top: 0.2em;
+}
+
+.text-center {
+    text-align: center;
+    width: 100%;
+}
+
+.title-hidden .scramble-text {
+    opacity: 0;
+    visibility: hidden;
+}
+
+h1 .line1,
+h1 .line2,
+h1 .line3 {
+    display: block;
+    line-height: 1;
+    text-align: center;
+    transition: opacity 0.3s ease;
+}
+
+/* **************************************** */
+/* Agregar al inicio de los estilos, para que tenga prioridad */
+.initially-hidden {
+    opacity: 0 !important;
+    visibility: hidden !important;
+}
+
+.scramble-title {
+    min-height: 3em; /* Para evitar saltos en el layout */
+}
+
+h1 .line1,
+h1 .line2,
+h1 .line3 {
+    display: block;
+    line-height: 1;
+    text-align: center;
+    transition: opacity 0.3s ease;
+}
+
+/* **************************************** */
+/* Logo Styles */
+.logo-container {
+    position: fixed;
+    top: 30px;
+    left: 30px;
+    z-index: 2000;
+}
+
+.site-logo {
+    width: 200px;
+    height: auto;
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+    fill: transparent;
+    transition: fill 1s ease;
+}
+
+.site-logo.animated {
+    animation: draw 2s forwards, fill 1s 2s forwards;
+}
+
+@keyframes draw {
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+@keyframes fill {
+    to {
+        fill: #00ddff; /* Cambia al color que desees */
+    }
+}
+
+/* **************************************** */
+/* Estados normales del logo */
+:root[data-theme="light"] .site-logo {
+    filter: brightness(0); /* Negro */
+}
+
+:root[data-theme="dark"] .site-logo {
+    filter: brightness(100); /* Blanco */
+}
+
+.site-logo .cls-1 {
+    fill: transparent;
+    stroke: #fff;
+    stroke-width: 4;
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+    transition: fill 0.5s ease;
+}
+
+/* Tema oscuro (default) */
+:root[data-theme="dark"] body {
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Ccircle cx='5' cy='5' r='5' fill='white'/%3E%3C/svg%3E") 5 5, auto;
+}
+
+:root[data-theme="dark"] a,
+:root[data-theme="dark"] button,
+:root[data-theme="dark"] input,
+:root[data-theme="dark"] .hamburger-menu,
+:root[data-theme="dark"] .theme-switch {
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='21' height='21' viewBox='0 0 21 21'%3E%3Cpath d='M10.5 0v21M0 10.5h21' stroke='white' stroke-width='2'/%3E%3C/svg%3E") 10.5 10.5, pointer;
+}
+
+/* Tema claro */
+:root[data-theme="light"] body {
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Ccircle cx='5' cy='5' r='5' fill='black'/%3E%3C/svg%3E") 5 5, auto;
+}
+
+:root[data-theme="light"] a,
+:root[data-theme="light"] button,
+:root[data-theme="light"] input,
+:root[data-theme="light"] .hamburger-menu,
+:root[data-theme="light"] .theme-switch {
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='21' height='21' viewBox='0 0 21 21'%3E%3Cpath d='M10.5 0v21M0 10.5h21' stroke='black' stroke-width='2'/%3E%3C/svg%3E") 10.5 10.5, pointer;
+}
+
+/* Mantener el círculo */
+.cursor-circle {
+    width: 40px;
+    height: 40px;
+    border: 2px solid var(--text-color);
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    border-radius: 50%;
+    z-index: 9998;
+    transform: translate(-20px, -20px);
+    transition: transform 0.1s cubic-bezier(0.5, 0.1, 0.5, 1);
+}
+
+.cursor-circle.hover {
+    transform: translate(-30px, -30px) scale(1.5);
+}
+
+.progress-text {
+    position: absolute;
+    top: -35px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 15px;
+    color: var(--text-color);
+    white-space: nowrap;
+    opacity: 0;
+    animation: fadeInText 0.5s ease-out 1s forwards; /* 1s de delay para que aparezca después de la animación de la barra */
+}
+
+@keyframes fadeInText {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(10px);
+    }
+    to {
+        opacity: 0.7;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+/* TYPOGRAPHY */
+body {
+    font-family: 'Source Code Pro', monospace; /* Cambiado: esta será la fuente base secundaria */
+}
+
+p, .progress-text {
+    font-family: 'Source Code Pro', monospace;
+    font-weight: 400; /* Peso normal para mejor legibilidad */
+}
+
+/* Asegurarse de que los párrafos dentro de otros elementos también usen Source Code Pro */
+.menu-titles p,
+.label p,
+.panel p,
+.section p {
+    font-family: 'Source Code Pro', monospace;
+}
+
+/* Tema oscuro */
+:root[data-theme="dark"] {
+    --bg-color: #000000;
+    --bg-color-rgb: 0, 0, 0;
+    --text-color: #F5F5F5;
+    /* ... otros valores ... */
+}
+
+:root[data-theme="dark"] ::selection {
+    background: #F5F5F5; /* Fondo blanco */
+    color: #000000; /* Texto negro */
+}
+
+:root[data-theme="dark"] ::-moz-selection {
+    background: #F5F5F5;
+    color: #000000;
+}
+
+/* Tema claro */
+:root[data-theme="light"] {
+    --bg-color: #F5F5F5;
+    --bg-color-rgb: 245, 245, 245;
+    --text-color: #2A2A2A;
+    /* ... otros valores ... */
+}
+
+:root[data-theme="light"] ::selection {
+    background: #000000; /* Fondo negro */
+    color: #F5F5F5; /* Texto blanco */
+}
+
+:root[data-theme="light"] ::-moz-selection {
+    background: #000000;
+    color: #F5F5F5;
+}
+
+/* PRELOADER */
+.preloader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--bg-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.preloader-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.loading-bar {
+    width: 200px;
+    height: 3px;
+    background: var(--progress-container-bg);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.loading-bar::after {
+    content: '';
+    display: block;
+    width: 40%;
+    height: 100%;
+    background-color: var(--progress-default);
+    animation: loading 1s ease-in-out infinite;
+    border-radius: 3px;
+    box-shadow: 
+        inset 0 0 10px var(--progress-default),
+        inset 0 0 20px var(--progress-default),
+        0 0 20px var(--progress-default),
+        0 0 35px var(--progress-default);
+}
+
+@keyframes loading {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(350%); }
+}
+
+.preloader.fade-out {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+/* Animaciones más rápidas para los elementos UI */
+.theme-switch-wrapper.animate-in {
+    animation: fadeInScale 0.5s cubic-bezier(0.17, 0.55, 0.55, 1) forwards;
+}
+
+.hamburger-menu.animate-in {
+    animation: fadeInScale 0.5s cubic-bezier(0.17, 0.55, 0.55, 1) forwards;
+}
+
+.nav-dots.animate-in {
+    animation: fadeInScale 0.5s cubic-bezier(0.17, 0.55, 0.55, 1) forwards;
+}
+
+.logo-container.animate-in {
+    animation: fadeInScale 0.5s cubic-bezier(0.17, 0.55, 0.55, 1) forwards;
+}
+
+/* Progress wrapper también más rápido */
+.progress-wrapper.animate-in .progress-container {
+    animation: growContainer 0.5s cubic-bezier(0.17, 0.55, 0.55, 1) forwards;
+}

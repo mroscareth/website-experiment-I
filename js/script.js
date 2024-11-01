@@ -23,42 +23,65 @@ function initThemeSwitch() {
  * Scramble animation for specified text elements
  */
 function initScrambleText() {
-    const scrambleText = document.querySelector('.scramble-text');
-    if (!scrambleText) return;
+    const scrambleTexts = document.querySelectorAll('.scramble-text');
+    if (!scrambleTexts.length) return;
 
-    const originalText = scrambleText.textContent;
-    const chars = "!@#$%^&*()_+-=[]{}|;:,.<>?";
-    let scrambleInterval;
+    const chars = "⌰⍜⋏☌ ⌰⟟⎐⟒ ⏁⊑⟒ ⟒⏁⊑⟒⍀⟒⏃⋏ ⟒⋔⌿⟟⍀⟒";
+    let scrambleIntervals = [];
     
-    function scramble(iteration = 0) {
+    function scramble(element, iteration = 0) {
+        element.classList.remove('initially-hidden');
+        element.style.opacity = '1';
+        element.style.visibility = 'visible';
+        
+        const originalText = element.getAttribute('data-original') || element.textContent;
+        if (!element.getAttribute('data-original')) {
+            element.setAttribute('data-original', originalText);
+        }
+        
         const currentText = originalText
             .split("")
             .map((char, index) => index < iteration ? char : 
                 chars[Math.floor(Math.random() * chars.length)])
             .join("");
         
-        scrambleText.textContent = currentText;
+        element.textContent = currentText;
         
         if (iteration >= originalText.length) {
-            clearInterval(scrambleInterval);
-            scrambleText.textContent = originalText;
             return true;
         }
         return false;
     }
 
-    function startScramble() {
+    function startScramble(element) {
         let iteration = 0;
-        scrambleInterval = setInterval(() => {
-            if (scramble(iteration)) {
-                clearInterval(scrambleInterval);
+        const interval = setInterval(() => {
+            if (scramble(element, iteration)) {
+                clearInterval(interval);
             }
-            iteration += 1/3;
-        }, 30);
+            iteration += 1/2;
+        }, 20);
+        return interval;
     }
 
-    startScramble();
-    setInterval(startScramble, 5000);
+    function animateAll() {
+        scrambleIntervals.forEach(interval => clearInterval(interval));
+        scrambleIntervals = [];
+        
+        scrambleTexts.forEach(text => {
+            text.classList.add('initially-hidden');
+        });
+        
+        scrambleTexts.forEach((text, index) => {
+            setTimeout(() => {
+                const interval = startScramble(text);
+                scrambleIntervals.push(interval);
+            }, index * 400);
+        });
+    }
+
+    animateAll();
+    setInterval(animateAll, 8000);
 }
 
 /**
@@ -220,23 +243,21 @@ function initMenuToggle() {
             );
 
         } else {
-            // Salida del menú
+            // Salida del menú con blur
             gsap.to(menuTitles, {
-                duration: 0.4,
+                duration: 0.1, // Reducir duración para que desaparezcan más rápido
                 opacity: 0,
-                y: -50,
-                rotateX: 45,
-                filter: "blur(5px)",
-                stagger: 0.05,
-                ease: "power2.in"
+                filter: "blur(10px)",
+                stagger: 0.05, // Reducir el stagger para que desaparezcan más rápido
+                ease: "power4.in"
             });
 
             gsap.to(menuOverlay, {
-                duration: 0.5,
+                duration: 0.5, // Mantener duración para que el overlay desaparezca después
                 opacity: 0,
                 backdropFilter: "blur(0px)",
                 ease: "power2.inOut",
-                delay: 0.2,
+                delay: 0.1, // Añadir un pequeño delay para que el overlay desaparezca después de los títulos
                 onComplete: () => {
                     body.style.overflow = 'auto';
                 }
@@ -282,32 +303,28 @@ function initMenuToggle() {
  */
 function initProgressBar() {
     const progressBar = document.querySelector('.progress-bar');
-    const progressFlags = document.querySelector('.progress-flags');
-    
+    const sections = document.querySelectorAll('section');
+
     function updateProgress() {
-        const windowHeight = window.innerHeight;
-        const documentHeight = document.documentElement.scrollHeight;
+        const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
         const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
         
-        // Calculamos el progreso considerando la altura de la ventana
-        const scrollable = documentHeight - windowHeight;
-        const progress = (scrollTop / scrollable) * 100;
-        
-        // Actualizamos la barra de progreso
-        const progressValue = Math.min(100, Math.max(0, progress));
-        progressBar.style.width = `${progressValue}%`;
-        
-        // Verificamos si se completó el progreso
+        const progressValue = (scrollTop / totalHeight) * 100;
+        gsap.to(progressBar, { width: `${progressValue}%`, duration: 0.1 });
+
+        // Cambiar a completado
         if (progressValue >= 99.9) {
+            gsap.to(progressBar, { backgroundColor: '#00ff00', duration: 0.5, ease: "power2.inOut" });
             progressBar.classList.add('completed');
         } else {
+            gsap.to(progressBar, { backgroundColor: '#00ffff', duration: 0.5, ease: "power2.inOut" });
             progressBar.classList.remove('completed');
         }
     }
     
     window.addEventListener('scroll', updateProgress);
     window.addEventListener('resize', updateProgress);
-    updateProgress();
+    window.addEventListener('load', updateProgress);
 }
 
 /**
@@ -342,56 +359,18 @@ function initHorizontalScroll() {
  * Implements custom cursor with dot, circle and blur effects
  */
 function initCursor() {
-    const cursorDot = document.createElement('div');
     const cursorCircle = document.createElement('div');
-    const blurElement = document.createElement('div');
-    
-    cursorDot.className = 'cursor-dot';
     cursorCircle.className = 'cursor-circle';
-    blurElement.className = 'cursor-blur';
-    
-    document.body.appendChild(blurElement);
     document.body.appendChild(cursorCircle);
-    document.body.appendChild(cursorDot);
-    
-    let cursorPos = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
-    let dotPos = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
-    let circlePos = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
     
     document.addEventListener('mousemove', e => {
-        cursorPos.x = e.clientX;
-        cursorPos.y = e.clientY;
+        cursorCircle.style.transform = `translate(${e.clientX - 20}px, ${e.clientY - 20}px)${cursorCircle.classList.contains('hover') ? ' scale(1.5)' : ''}`;
     });
     
-    function animateCursor() {
-        dotPos.x += (cursorPos.x - dotPos.x) * 0.2;
-        dotPos.y += (cursorPos.y - dotPos.y) * 0.2;
-        
-        circlePos.x += (cursorPos.x - circlePos.x) * 0.1;
-        circlePos.y += (cursorPos.y - circlePos.y) * 0.1;
-        
-        cursorDot.style.transform = `translate(${dotPos.x - 4}px, ${dotPos.y - 4}px)`;
-        cursorCircle.style.transform = `translate(${circlePos.x - 20}px, ${circlePos.y - 20}px)`;
-        blurElement.style.transform = `translate(${circlePos.x - 20}px, ${circlePos.y - 20}px)`;
-        
-        requestAnimationFrame(animateCursor);
-    }
-    
-    animateCursor();
-    
-    // Interactive elements handling
     const interactiveElements = document.querySelectorAll('a, button, input, .hamburger-menu, .theme-switch');
-    
     interactiveElements.forEach(el => {
-        el.addEventListener('mouseenter', () => {
-            cursorCircle.classList.add('hover');
-            blurElement.classList.add('hover');
-        });
-        
-        el.addEventListener('mouseleave', () => {
-            cursorCircle.classList.remove('hover');
-            blurElement.classList.remove('hover');
-        });
+        el.addEventListener('mouseenter', () => cursorCircle.classList.add('hover'));
+        el.addEventListener('mouseleave', () => cursorCircle.classList.remove('hover'));
     });
 }
 
@@ -400,16 +379,136 @@ function initCursor() {
  * Starts all site functionality
  */
 function init() {
-    initHorizontalScroll();
-    ScrollTrigger.refresh();
-    initThemeSwitch();
-    initScrambleText();
-    initNavigation();
-    initMenuToggle();
-    initProgressBar();
-    initCursor();
+    const preloader = document.querySelector('.preloader');
+    
+    window.addEventListener('load', () => {
+        setTimeout(() => {
+            preloader.classList.add('fade-out');
+            
+            setTimeout(() => {
+                preloader.style.display = 'none';
+                
+                // Iniciar funcionalidades base
+                initHorizontalScroll();
+                ScrollTrigger.refresh();
+                
+                // Delay reducido a 0.5 segundos para todas las animaciones de UI
+                setTimeout(() => {
+                    // Progress Wrapper
+                    const progressWrapper = document.querySelector('.progress-wrapper');
+                    progressWrapper.style.opacity = '1';
+                    progressWrapper.classList.add('animate-in');
+                    initProgressBar();
+
+                    // Logo
+                    animateLogo();
+
+                    // Theme Switch
+                    const themeSwitch = document.querySelector('.theme-switch-wrapper');
+                    themeSwitch.style.opacity = '1';
+                    themeSwitch.classList.add('animate-in');
+                    initThemeSwitch();
+
+                    // Hamburger Menu
+                    const hamburgerMenu = document.querySelector('.hamburger-menu');
+                    hamburgerMenu.style.opacity = '1';
+                    hamburgerMenu.classList.add('animate-in');
+                    initMenuToggle();
+
+                    // Nav Dots
+                    const navDots = document.querySelector('.nav-dots');
+                    navDots.style.opacity = '1';
+                    navDots.classList.add('animate-in');
+                    initNavigation();
+
+                    // Scramble Text
+                    initScrambleText();
+
+                    // Cursor
+                    initCursor();
+                    
+                }, 500); // Reducido a 0.5 segundos
+                
+            }, 500); // Tiempo del fade-out del preloader
+        }, 2000); // Tiempo inicial del preloader
+    });
 }
 
-// Initialize on load
-window.addEventListener('load', init);
+// Remover el event listener anterior
+window.removeEventListener('load', init);
+
+// Iniciar cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', init);
+
+let logoAnimationComplete = false;
+
+function animateLogo() {
+    // Resetear el estado del logo
+    const logoPaths = document.querySelectorAll('.site-logo .cls-1');
+    logoAnimationComplete = false;
+    
+    // Resetear los valores iniciales
+    logoPaths.forEach(path => {
+        path.style.strokeDashoffset = '1000';
+        path.style.fill = 'transparent';
+    });
+
+    // Crear nueva animación
+    const tl = gsap.timeline({
+        onComplete: () => {
+            logoAnimationComplete = true;
+        }
+    });
+
+    // Animación del trazo
+    tl.to(logoPaths, {
+        strokeDashoffset: 0,
+        duration: 2,
+        ease: "power2.inOut"
+    })
+    // Animación del relleno
+    .to(logoPaths, {
+        fill: "#ffffff",
+        duration: 1,
+        ease: "power2.inOut"
+    }, "+=0.2");
+}
+
+function updateProgressBar() {
+    const progressBar = document.querySelector('.progress-bar');
+    const logoPaths = document.querySelectorAll('.site-logo .cls-1');
+
+    function updateProgress() {
+        if (!logoAnimationComplete) return;
+
+        const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const progressValue = (scrollTop / totalHeight) * 100;
+
+        gsap.to(progressBar, { width: `${progressValue}%`, duration: 0.1 });
+
+        if (progressValue >= 99.9) {
+            progressBar.classList.add('completed');
+        } else {
+            progressBar.classList.remove('completed');
+        }
+    }
+
+    window.addEventListener('scroll', updateProgress);
+    window.addEventListener('resize', updateProgress);
+    // No necesitamos el setTimeout aquí ya que el timing se maneja en init()
+    updateProgress();
+}
+
+window.addEventListener('load', () => {
+    animateLogo();
+    updateProgressBar();
+});
+
+// Ejecutar la animación cuando la página se vuelve visible
+document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+        animateLogo();
+    }
+});
 
