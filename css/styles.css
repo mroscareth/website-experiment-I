@@ -922,7 +922,7 @@ p, .progress-text {
     color: #F5F5F5;
 }
 
-/* PRELOADER */
+/* Actualizar los estilos del preloader */
 .preloader {
     position: fixed;
     top: 0;
@@ -934,67 +934,152 @@ p, .progress-text {
     justify-content: center;
     align-items: center;
     z-index: 9999;
+    perspective: 1000px;
+    overflow: visible;
 }
 
-.preloader-content {
+.alien-loader {
+    position: relative;
+    width: 300px;
+    height: 300px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 20px;
+    transform-style: preserve-3d;
+    overflow: visible;
 }
 
-.loading-bar {
-    width: 200px;
-    height: 3px;
-    background: var(--progress-container-bg);
-    border-radius: 3px;
+.circle-container {
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    animation: float 3s ease-in-out infinite;
+    overflow: visible;
+}
+
+.circle {
+    fill: none;
+    stroke: var(--progress-default);
+    stroke-width: 0.5;
+    filter: url(#glow);
+    opacity: 0.5;
+    transform-origin: center;
+    transform-box: fill-box;
+}
+
+.circle1 {
+    animation: rotate1 8s linear infinite;
+}
+
+.circle2 {
+    animation: rotate2 6s linear infinite;
+}
+
+.circle3 {
+    animation: rotate3 4s linear infinite;
+}
+
+@keyframes rotate1 {
+    from { transform: rotate(0deg) translateX(2px) rotate(0deg); }
+    to { transform: rotate(360deg) translateX(2px) rotate(-360deg); }
+}
+
+@keyframes rotate2 {
+    from { transform: rotate(120deg) translateX(4px) rotate(-120deg); }
+    to { transform: rotate(480deg) translateX(4px) rotate(-480deg); }
+}
+
+@keyframes rotate3 {
+    from { transform: rotate(240deg) translateX(6px) rotate(-240deg); }
+    to { transform: rotate(600deg) translateX(6px) rotate(-600deg); }
+}
+
+/* Efecto de desvanecimiento actualizado */
+.preloader.fade-out {
+    transition: visibility 0.8s;
+}
+
+.preloader.fade-out .circle {
+    animation: fadeOutAsync 0.8s ease forwards;
+}
+
+.preloader.fade-out .circle1 {
+    animation-delay: 0s;
+}
+
+.preloader.fade-out .circle2 {
+    animation-delay: 0.2s;
+}
+
+.preloader.fade-out .circle3 {
+    animation-delay: 0.4s;
+}
+
+.preloader.fade-out .glitch-text,
+.preloader.fade-out .loading-bar-container {
+    animation: fadeOutAsync 0.4s ease forwards;
+    animation-delay: 0.6s;
+}
+
+@keyframes fadeOutAsync {
+    from {
+        opacity: 0.5;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+}
+
+/* Mantener el resto de los estilos igual */
+.alien-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    width: 100%;
+}
+
+.glitch-text {
+    font-family: 'Source Code Pro', monospace;
+    font-size: 1.2rem;
+    color: var(--progress-default);
+    text-shadow: 0 0 5px var(--progress-default);
+    letter-spacing: 0.2em;
+    animation: glitch 1s infinite;
+}
+
+.loading-bar-container {
+    width: 150px;
+    height: 2px;
+    background: rgba(0, 255, 255, 0.2);
+    margin: 15px auto 0;
+    position: relative;
     overflow: hidden;
 }
 
-.loading-bar::after {
-    content: '';
-    display: block;
-    width: 40%;
+.loading-bar {
+    width: 0%;
     height: 100%;
-    background-color: var(--progress-default);
-    animation: loading 1s ease-in-out infinite;
-    border-radius: 3px;
-    box-shadow: 
-        inset 0 0 10px var(--progress-default),
-        inset 0 0 20px var(--progress-default),
-        0 0 20px var(--progress-default),
-        0 0 35px var(--progress-default);
+    background: var(--progress-default);
+    position: absolute;
+    left: 0;
+    top: 0;
+    animation: loadProgress 2s ease-in-out infinite;
+    box-shadow: 0 0 10px var(--progress-default);
 }
 
-@keyframes loading {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(350%); }
-}
-
+/* Asegurar que el contenedor principal se desvanezca al final */
 .preloader.fade-out {
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.5s ease, visibility 0.5s ease;
+    animation: fadeOutContainer 0.3s ease forwards;
+    animation-delay: 1s;
 }
 
-/* Animaciones más rápidas para los elementos UI */
-.theme-switch-wrapper.animate-in {
-    animation: fadeInScale 0.5s cubic-bezier(0.17, 0.55, 0.55, 1) forwards;
-}
-
-.hamburger-menu.animate-in {
-    animation: fadeInScale 0.5s cubic-bezier(0.17, 0.55, 0.55, 1) forwards;
-}
-
-.nav-dots.animate-in {
-    animation: fadeInScale 0.5s cubic-bezier(0.17, 0.55, 0.55, 1) forwards;
-}
-
-.logo-container.animate-in {
-    animation: fadeInScale 0.5s cubic-bezier(0.17, 0.55, 0.55, 1) forwards;
-}
-
-/* Progress wrapper también más rápido */
-.progress-wrapper.animate-in .progress-container {
-    animation: growContainer 0.5s cubic-bezier(0.17, 0.55, 0.55, 1) forwards;
+@keyframes fadeOutContainer {
+    to {
+        opacity: 0;
+        visibility: hidden;
+    }
 }
