@@ -274,7 +274,7 @@ function initMenuToggle() {
                 duration: 0.1, // Reducir duración para que desaparezcan más rápido
                 opacity: 0,
                 filter: "blur(10px)",
-                stagger: 0.05, // Reducir el stagger para que desaparezcan más r��pido
+                stagger: 0.05, // Reducir el stagger para que desaparezcan más rpido
                 ease: "power4.in"
             });
 
@@ -502,7 +502,14 @@ function animateLogo() {
 
 function updateProgressBar() {
     const progressBar = document.querySelector('.progress-bar');
-    const logoPaths = document.querySelectorAll('.site-logo .cls-1');
+    const progressContainer = document.querySelector('.progress-container');
+    const progressHelper = document.createElement('div');
+    progressHelper.className = 'progress-helper';
+    progressContainer.appendChild(progressHelper);
+    
+    let isDragging = false;
+    let startX;
+    let scrollStart;
 
     function updateProgress() {
         if (!logoAnimationComplete) return;
@@ -512,17 +519,78 @@ function updateProgressBar() {
         const progressValue = (scrollTop / totalHeight) * 100;
 
         gsap.to(progressBar, { width: `${progressValue}%`, duration: 0.1 });
-
-        if (progressValue >= 99.9) {
-            progressBar.classList.add('completed');
-        } else {
-            progressBar.classList.remove('completed');
-        }
+        gsap.to(progressHelper, {
+            left: `${progressValue}%`,
+            duration: 0.1
+        });
     }
+
+    function startDragging(e) {
+        e.preventDefault();
+        isDragging = true;
+        startX = e.type === 'mousedown' ? e.pageX : e.touches[0].pageX;
+        scrollStart = window.pageYOffset;
+        progressContainer.classList.add('dragging');
+        progressHelper.classList.add('dragging');
+    }
+
+    function stopDragging() {
+        isDragging = false;
+        progressContainer.classList.remove('dragging');
+        progressHelper.classList.remove('dragging');
+    }
+
+    function drag(e) {
+        if (!isDragging) return;
+
+        e.preventDefault();
+        const x = e.type === 'mousemove' ? e.pageX : e.touches[0].pageX;
+        const containerRect = progressContainer.getBoundingClientRect();
+        const relativeX = x - containerRect.left;
+        const percentage = (relativeX / containerRect.width) * 100;
+        
+        // Limitar el porcentaje entre 0 y 100
+        const clampedPercentage = Math.max(0, Math.min(100, percentage));
+        
+        // Actualizar posición del helper
+        gsap.to(progressHelper, {
+            left: `${clampedPercentage}%`,
+            duration: 0.1
+        });
+
+        // Actualizar barra de progreso
+        gsap.to(progressBar, {
+            width: `${clampedPercentage}%`,
+            duration: 0.1
+        });
+
+        // Aplicar scroll
+        const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const targetScroll = (clampedPercentage / 100) * totalHeight;
+        
+        gsap.to(window, {
+            duration: 0.5,
+            scrollTo: {
+                y: targetScroll,
+                autoKill: false
+            },
+            ease: "power2.out"
+        });
+    }
+
+    // Event listeners en el helper en lugar del container
+    progressHelper.addEventListener('mousedown', startDragging);
+    progressHelper.addEventListener('touchstart', startDragging, { passive: false });
+    
+    window.addEventListener('mousemove', drag);
+    window.addEventListener('touchmove', drag, { passive: false });
+    
+    window.addEventListener('mouseup', stopDragging);
+    window.addEventListener('touchend', stopDragging);
+    window.addEventListener('mouseleave', stopDragging);
 
     window.addEventListener('scroll', updateProgress);
     window.addEventListener('resize', updateProgress);
-    // No necesitamos el setTimeout aquí ya que el timing se maneja en init()
     updateProgress();
 }
 

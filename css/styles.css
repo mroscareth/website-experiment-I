@@ -719,13 +719,65 @@ input:checked + .slider:before {
 /* **************************************** */
 /* PROGRESS BAR */
 .progress-container {
-    width: 0;
+    width: 50vw;
     height: 3px;
     background: var(--progress-container-bg);
     border-radius: 3px;
     transform-origin: center;
     position: relative;
     overflow: visible;
+    cursor: pointer;
+    touch-action: none;
+}
+
+/* Círculo helper - ahora interactivo */
+.progress-helper {
+    display: block;
+    width: 40px;
+    height: 40px;
+    border: 2px solid var(--text-color);
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    opacity: 0.3;
+    transition: opacity 0.3s ease, transform 0.2s ease;
+    z-index: 10;
+    cursor: grab; /* Indicador visual de que se puede arrastrar */
+}
+
+/* Estilo cuando se está arrastrando */
+.progress-helper.dragging {
+    cursor: grabbing;
+    transform: translate(-50%, -50%) scale(1.1);
+    opacity: 0.5;
+}
+
+/* Estado activo durante el drag */
+.progress-container.dragging {
+    height: 5px;
+    transition: height 0.2s ease;
+}
+
+.progress-container.dragging .progress-bar {
+    height: 100%;
+    background-color: var(--progress-completed);
+}
+
+/* Ajustes específicos para móvil */
+@media (max-width: 768px) {
+    .progress-container {
+        width: 70vw;
+    }
+}
+
+/* Ajustes para hover en desktop */
+@media (hover: hover) {
+    .progress-helper:hover {
+        opacity: 0.5;
+        transform: translate(-50%, -50%) scale(1.1);
+    }
 }
 
 @keyframes growContainer {
@@ -1262,5 +1314,107 @@ p, .progress-text {
                      0 0 20px var(--progress-default);
         opacity: 0.7;
         transform: scale(1);
+    }
+}
+
+/* Logo Styles */
+.logo-container {
+    position: fixed;
+    top: 30px;
+    left: 30px;
+    z-index: 2000;
+}
+
+.site-logo {
+    width: 200px;
+    height: auto;
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+    fill: transparent;
+    transition: fill 1s ease;
+}
+
+/* Media query for mobile devices */
+@media (max-width: 768px) {
+    .logo-container {
+        top: 20px;
+        left: 20px;
+    }
+    
+    .site-logo {
+        width: 120px;
+    }
+
+    .theme-switch-wrapper {
+        bottom: 20px;
+        left: 20px;
+    }
+
+    .hamburger-menu {
+        top: 20px;
+        right: 20px;
+    }
+}
+
+/* Progress bar styles */
+.progress-container {
+    width: 50vw;
+    height: 3px;
+    background: var(--progress-container-bg);
+    border-radius: 3px;
+    transform-origin: center;
+    position: relative;
+    overflow: visible;
+    cursor: pointer;
+    touch-action: none;
+}
+
+/* Círculo helper - ahora interactivo */
+.progress-helper {
+    display: block;
+    width: 40px;
+    height: 40px;
+    border: 2px solid var(--text-color);
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    opacity: 0.3;
+    transition: opacity 0.3s ease, transform 0.2s ease;
+    z-index: 10;
+    cursor: grab; /* Indicador visual de que se puede arrastrar */
+}
+
+/* Estilo cuando se está arrastrando */
+.progress-helper.dragging {
+    cursor: grabbing;
+    transform: translate(-50%, -50%) scale(1.1);
+    opacity: 0.5;
+}
+
+/* Estado activo durante el drag */
+.progress-container.dragging {
+    height: 5px;
+    transition: height 0.2s ease;
+}
+
+.progress-container.dragging .progress-bar {
+    height: 100%;
+    background-color: var(--progress-completed);
+}
+
+/* Ajustes específicos para móvil */
+@media (max-width: 768px) {
+    .progress-container {
+        width: 70vw;
+    }
+}
+
+/* Ajustes para hover en desktop */
+@media (hover: hover) {
+    .progress-helper:hover {
+        opacity: 0.5;
+        transform: translate(-50%, -50%) scale(1.1);
     }
 }
