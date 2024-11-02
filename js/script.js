@@ -89,82 +89,100 @@ function initScrambleText() {
  * Handles smooth scrolling and section detection
  */
 function initNavigation() {
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    console.log('Is Mobile:', isMobile);
+    const navLinks = document.querySelectorAll('.nav-dots a');
+    
+    if (!navLinks.length) {
+        console.warn('Navigation dots not found');
+        return;
+    }
 
-    document.querySelectorAll('.nav-dots a').forEach(link => {
+    // Debounce function para optimizar el scroll
+    const debounce = (func, wait) => {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    };
+
+    navLinks.forEach(link => {
         link.addEventListener('click', (e) => {
             e.preventDefault();
             const targetId = link.getAttribute('href');
             const target = document.querySelector(targetId);
             
-            console.log('Click detected on:', targetId);
-            
-            if (target) {
-                // Calcular la posición exacta de la sección objetivo
-                const rect = target.getBoundingClientRect();
-                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-                const targetPosition = scrollTop + rect.top;
-                
-                console.log('Target rect:', rect);
-                console.log('Current scroll:', scrollTop);
-                console.log('Calculated target position:', targetPosition);
-
-                // Asegurarse de que la posición objetivo sea válida
-                const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-                const finalPosition = Math.min(targetPosition, maxScroll);
-                
-                console.log('Max scroll possible:', maxScroll);
-                console.log('Final scroll position:', finalPosition);
-
-                // Usar GSAP con valores absolutos
-                gsap.to(window, {
-                    duration: 1,
-                    scrollTo: {
-                        y: finalPosition,
-                        autoKill: false
-                    },
-                    ease: "power2.out",
-                    onStart: () => {
-                        console.log('Starting scroll to position:', finalPosition);
-                    },
-                    onUpdate: () => {
-                        console.log('Current scroll position:', window.pageYOffset);
-                    },
-                    onComplete: () => {
-                        console.log('Scroll complete. Final position:', window.pageYOffset);
-                        // Verificar si llegamos donde debíamos
-                        const currentPosition = window.pageYOffset;
-                        const difference = Math.abs(currentPosition - finalPosition);
-                        
-                        if (difference > 10) {
-                            console.log('Position mismatch. Correcting...');
-                            // Intentar corregir con scroll nativo como respaldo
-                            window.scrollTo(0, finalPosition);
-                        }
-                        
-                        updateActiveNav(targetId.replace('#', ''));
-                    }
-                });
+            if (!target) {
+                console.warn(`Target section ${targetId} not found`);
+                return;
             }
+
+            // Calcular la posición exacta de la sección objetivo
+            const rect = target.getBoundingClientRect();
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const targetPosition = scrollTop + rect.top;
+            
+            console.log('Target rect:', rect);
+            console.log('Current scroll:', scrollTop);
+            console.log('Calculated target position:', targetPosition);
+
+            // Asegurarse de que la posición objetivo sea válida
+            const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+            const finalPosition = Math.min(targetPosition, maxScroll);
+            
+            console.log('Max scroll possible:', maxScroll);
+            console.log('Final scroll position:', finalPosition);
+
+            // Usar GSAP con valores absolutos
+            gsap.to(window, {
+                duration: 1,
+                scrollTo: {
+                    y: finalPosition,
+                    autoKill: false
+                },
+                ease: "power2.out",
+                onStart: () => {
+                    console.log('Starting scroll to position:', finalPosition);
+                },
+                onUpdate: () => {
+                    console.log('Current scroll position:', window.pageYOffset);
+                },
+                onComplete: () => {
+                    console.log('Scroll complete. Final position:', window.pageYOffset);
+                    // Verificar si llegamos donde debíamos
+                    const currentPosition = window.pageYOffset;
+                    const difference = Math.abs(currentPosition - finalPosition);
+                    
+                    if (difference > 10) {
+                        console.log('Position mismatch. Correcting...');
+                        // Intentar corregir con scroll nativo como respaldo
+                        window.scrollTo(0, finalPosition);
+                    }
+                    
+                    updateActiveNav(targetId.replace('#', ''));
+                }
+            });
         });
     });
 
-    // Configuración de ScrollTrigger para la detección de secciones
-    ScrollTrigger.config({
-        tolerance: 10,
-        ignoreMobileResize: true
+    // Optimizar la detección de secciones con debounce
+    const debouncedUpdate = debounce((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                updateActiveNav(entry.target.id);
+            }
+        });
+    }, 50);
+
+    const observer = new IntersectionObserver(debouncedUpdate, {
+        threshold: 0.5
     });
 
     document.querySelectorAll('section[id]').forEach(section => {
-        ScrollTrigger.create({
-            trigger: section,
-            start: "top center",
-            end: "bottom center",
-            onEnter: () => updateActiveNav(section.id),
-            onEnterBack: () => updateActiveNav(section.id),
-            markers: false
-        });
+        observer.observe(section);
     });
 }
 
@@ -389,10 +407,36 @@ function initCursor() {
     cursorCircle.className = 'cursor-circle';
     document.body.appendChild(cursorCircle);
     
-    document.addEventListener('mousemove', e => {
-        cursorCircle.style.transform = `translate(${e.clientX - 20}px, ${e.clientY - 20}px)${cursorCircle.classList.contains('hover') ? ' scale(1.5)' : ''}`;
-    });
+    // Variables para animación suave
+    let currentX = 0;
+    let currentY = 0;
+    let targetX = 0;
+    let targetY = 0;
     
+    // Usar requestAnimationFrame para movimiento más suave
+    function updateCursor() {
+        // Interpolación suave
+        currentX += (targetX - currentX) * 0.15;
+        currentY += (targetY - currentY) * 0.15;
+        
+        // Usar transform en lugar de left/top para mejor rendimiento
+        cursorCircle.style.transform = `translate(${currentX - 20}px, ${currentY - 20}px)${
+            cursorCircle.classList.contains('hover') ? ' scale(1.5)' : ''
+        }`;
+        
+        requestAnimationFrame(updateCursor);
+    }
+    
+    // Actualizar solo las coordenadas objetivo
+    document.addEventListener('mousemove', e => {
+        targetX = e.clientX;
+        targetY = e.clientY;
+    }, { passive: true });
+    
+    // Iniciar loop de animación
+    updateCursor();
+    
+    // Optimizar los event listeners de hover
     const interactiveElements = document.querySelectorAll('a, button, input, .hamburger-menu, .theme-switch');
     interactiveElements.forEach(el => {
         el.addEventListener('mouseenter', () => cursorCircle.classList.add('hover'));
@@ -405,6 +449,9 @@ function initCursor() {
  * Starts all site functionality
  */
 function init() {
+    // Limpiar listeners anteriores
+    cleanup();
+    
     const preloader = document.querySelector('.preloader');
     
     window.addEventListener('load', () => {
@@ -503,6 +550,13 @@ function animateLogo() {
 function updateProgressBar() {
     const progressBar = document.querySelector('.progress-bar');
     const progressContainer = document.querySelector('.progress-container');
+    
+    // Validación temprana
+    if (!progressBar || !progressContainer) {
+        console.warn('Progress bar elements not found');
+        return;
+    }
+    
     const progressHelper = document.createElement('div');
     progressHelper.className = 'progress-helper';
     progressContainer.appendChild(progressHelper);
@@ -512,16 +566,19 @@ function updateProgressBar() {
     let scrollStart;
 
     function updateProgress() {
-        if (!logoAnimationComplete) return;
+        // Solo actualizar si tenemos logoAnimationComplete y los elementos existen
+        if (!logoAnimationComplete || !progressBar || !progressHelper) return;
 
         const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
         const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
         const progressValue = (scrollTop / totalHeight) * 100;
 
-        gsap.to(progressBar, { width: `${progressValue}%`, duration: 0.1 });
-        gsap.to(progressHelper, {
-            left: `${progressValue}%`,
-            duration: 0.1
+        requestAnimationFrame(() => {
+            gsap.to(progressBar, { width: `${progressValue}%`, duration: 0.1 });
+            gsap.to(progressHelper, {
+                left: `${progressValue}%`,
+                duration: 0.1
+            });
         });
     }
 
@@ -671,4 +728,21 @@ document.addEventListener('DOMContentLoaded', () => {
         subtree: true
     });
 })();
+
+// Al inicio del archivo, después de las variables globales
+const cleanupFunctions = new Set();
+
+// Función helper para agregar event listeners con limpieza automática
+function addCleanableEventListener(element, event, handler, options) {
+    element.addEventListener(event, handler, options);
+    cleanupFunctions.add(() => {
+        element.removeEventListener(event, handler, options);
+    });
+}
+
+// Función para limpiar todos los event listeners
+function cleanup() {
+    cleanupFunctions.forEach(cleanup => cleanup());
+    cleanupFunctions.clear();
+}
 
