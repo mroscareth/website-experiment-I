@@ -440,41 +440,26 @@ input:checked + .slider:before {
 }
 
 .horizontal-wrapper {
-    width: 100vw;
+    width: 100%;
     height: 100vh;
     position: relative;
     overflow: hidden;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-}
-
-.horizontal-wrapper::-webkit-scrollbar {
-    display: none;
 }
 
 .horizontal-slider {
+    height: 100%;
+    width: fit-content; /* Importante: permite que el contenedor se ajuste al contenido */
     display: flex;
-    width: 400%;
-    height: 100vh;
-    position: absolute;
-    left: 0;
-    top: 0;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-}
-
-.horizontal-slider::-webkit-scrollbar {
-    display: none;
+    position: relative;
 }
 
 .panel {
     width: 100vw;
     height: 100vh;
-    flex-shrink: 0;
     display: flex;
     justify-content: center;
     align-items: center;
-    overflow: hidden;
+    flex-shrink: 0; /* Importante: evita que los paneles se compriman */
 }
 
 .panel h1 {
@@ -1416,5 +1401,48 @@ p, .progress-text {
     .progress-helper:hover {
         opacity: 0.5;
         transform: translate(-50%, -50%) scale(1.1);
+    }
+}
+
+/* **************************************** */
+/* MAIN CONTENT */
+.horizontal-wrapper {
+    width: 100%;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+}
+
+.horizontal-slider {
+    height: 100%;
+    width: fit-content; /* Importante: permite que el contenedor se ajuste al contenido */
+    display: flex;
+    position: relative;
+}
+
+.panel {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0; /* Importante: evita que los paneles se compriman */
+}
+
+/* Asegurarse de que los paneles mantengan su tamaño */
+.horizontal-slider .panel {
+    min-width: 100vw;
+}
+
+/* Ajustes para móviles */
+@media (max-width: 768px) {
+    .horizontal-wrapper {
+        overflow: hidden;
+        touch-action: none;
+    }
+
+    .horizontal-slider {
+        touch-action: pan-x;
+        will-change: transform;
     }
 }

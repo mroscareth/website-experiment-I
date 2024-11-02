@@ -1,7 +1,7 @@
 /**
  * GSAP Plugin Registration
  */
-gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
+gsap.registerPlugin(ScrollToPlugin);
 
 /**
  * Theme Management
@@ -23,7 +23,7 @@ function initThemeSwitch() {
  * Scramble animation for specified text elements
  */
 function initScrambleText() {
-    const scrambleTexts = document.querySelectorAll('.scramble-text:not(.preloader .scramble-text)');
+    const scrambleTexts = document.querySelectorAll('#section1 .scramble-text, .preloader .scramble-text');
     if (!scrambleTexts.length) return;
 
     const chars = "⌰⍜⋏☌ ⌰⟟⎐⟒ ⏁⊑⟒ ⟒⏁⊑⟒⍀⟒⏃⋏ ⟒⋔⌿⟟⍀⟒";
@@ -90,115 +90,84 @@ function initScrambleText() {
  */
 function initNavigation() {
     const navLinks = document.querySelectorAll('.nav-dots a');
-    
+    const mainSections = ['section1', 'section2', 'section3', 'section4', 'section5'];
+    const controller = new ScrollMagic.Controller();
+
     if (!navLinks.length) {
         console.warn('Navigation dots not found');
         return;
     }
 
-    // Debounce function para optimizar el scroll
-    const debounce = (func, wait) => {
-        let timeout;
-        return function executedFunction(...args) {
-            const later = () => {
-                clearTimeout(timeout);
-                func(...args);
-            };
-            clearTimeout(timeout);
-            timeout = setTimeout(later, wait);
-        };
-    };
-
-    navLinks.forEach(link => {
+    // Configurar la navegación
+    navLinks.forEach((link, index) => {
         link.addEventListener('click', (e) => {
             e.preventDefault();
-            const targetId = link.getAttribute('href');
-            const target = document.querySelector(targetId);
+            const targetId = link.getAttribute('href').substring(1);
             
-            if (!target) {
-                console.warn(`Target section ${targetId} not found`);
+            // Si es el primer dot, ir al inicio absoluto
+            if (index === 0) {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+                updateActiveNav(targetId);
                 return;
             }
 
-            // Calcular la posición exacta de la sección objetivo
-            const rect = target.getBoundingClientRect();
-            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            const targetPosition = scrollTop + rect.top;
-            
-            console.log('Target rect:', rect);
-            console.log('Current scroll:', scrollTop);
-            console.log('Calculated target position:', targetPosition);
-
-            // Asegurarse de que la posición objetivo sea válida
-            const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-            const finalPosition = Math.min(targetPosition, maxScroll);
-            
-            console.log('Max scroll possible:', maxScroll);
-            console.log('Final scroll position:', finalPosition);
-
-            // Usar GSAP con valores absolutos
-            gsap.to(window, {
-                duration: 1,
-                scrollTo: {
-                    y: finalPosition,
-                    autoKill: false
-                },
-                ease: "power2.out",
-                onStart: () => {
-                    console.log('Starting scroll to position:', finalPosition);
-                },
-                onUpdate: () => {
-                    console.log('Current scroll position:', window.pageYOffset);
-                },
-                onComplete: () => {
-                    console.log('Scroll complete. Final position:', window.pageYOffset);
-                    // Verificar si llegamos donde debíamos
-                    const currentPosition = window.pageYOffset;
-                    const difference = Math.abs(currentPosition - finalPosition);
-                    
-                    if (difference > 10) {
-                        console.log('Position mismatch. Correcting...');
-                        // Intentar corregir con scroll nativo como respaldo
-                        window.scrollTo(0, finalPosition);
-                    }
-                    
-                    updateActiveNav(targetId.replace('#', ''));
-                }
-            });
-        });
-    });
-
-    // Optimizar la detección de secciones con debounce
-    const debouncedUpdate = debounce((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                updateActiveNav(entry.target.id);
+            // Para los demás dots, mantener el comportamiento actual
+            const target = document.getElementById(targetId);
+            if (target) {
+                const targetBounds = target.getBoundingClientRect();
+                const targetPosition = window.pageYOffset + targetBounds.top;
+                
+                window.scrollTo({
+                    top: targetPosition,
+                    behavior: 'smooth'
+                });
             }
         });
-    }, 50);
-
-    const observer = new IntersectionObserver(debouncedUpdate, {
-        threshold: 0.5
     });
 
-    document.querySelectorAll('section[id]').forEach(section => {
-        observer.observe(section);
+    // Crear escenas para detectar cada sección principal
+    mainSections.forEach(sectionId => {
+        const section = document.getElementById(sectionId);
+        if (section) {
+            new ScrollMagic.Scene({
+                triggerElement: section,
+                triggerHook: 0.5,
+                duration: window.innerHeight
+            })
+            .on('enter', () => {
+                updateActiveNav(sectionId);
+            })
+            .addTo(controller);
+        }
     });
-}
 
-/**
- * Navigation Helper
- * Updates active state of navigation dots
- */
-function updateActiveNav(sectionId) {
-    document.querySelectorAll('.nav-dots a').forEach(link => {
-        link.classList.remove('active');
-    });
-    
-    const activeLink = document.querySelector(`.nav-dots a[href="#${sectionId}"]`);
-    if (activeLink) {
-        activeLink.classList.add('active');
+    // Función para actualizar el estado activo de los dots
+    function updateActiveNav(sectionId) {
+        navLinks.forEach(link => {
+            const href = link.getAttribute('href').substring(1);
+            if (href === sectionId) {
+                link.classList.add('active');
+            } else {
+                link.classList.remove('active');
+            }
+        });
     }
+
+    // Actualizar en resize
+    window.addEventListener('resize', () => {
+        controller.update(true);
+    });
+
+    // Actualización inicial
+    setTimeout(() => {
+        const scrollPosition = window.pageYOffset;
+        const sectionIndex = Math.floor(scrollPosition / window.innerHeight);
+        const currentSectionId = mainSections[sectionIndex] || mainSections[0];
+        updateActiveNav(currentSectionId);
+    }, 100);
 }
 
 /**
@@ -373,28 +342,64 @@ function initProgressBar() {
 
 /**
  * Horizontal Scroll System
- * Implements horizontal scrolling sections using GSAP
+ * Implements horizontal scrolling sections using ScrollMagic
  */
 function initHorizontalScroll() {
+    const controller = new ScrollMagic.Controller();
     const sections = document.querySelectorAll(".horizontal-wrapper");
     
     sections.forEach(section => {
         const wrapper = section.querySelector('.horizontal-slider');
+        const panels = wrapper.querySelectorAll('.panel');
         
-        let tl = gsap.timeline({
-            scrollTrigger: {
-                trigger: section,
-                pin: true,
-                scrub: 1,
-                end: () => "+=" + wrapper.offsetWidth,
-                invalidateOnRefresh: true
+        // Asegurar posición inicial correcta
+        gsap.set(wrapper, { x: 0 });
+        
+        // Establecer el ancho total del slider
+        const totalWidth = panels.length * 100;
+        wrapper.style.width = `${totalWidth}vw`;
+
+        // Crear la animación GSAP
+        const timeline = gsap.timeline();
+        timeline.fromTo(wrapper, 
+            { x: 0 }, // Estado inicial explícito
+            {
+                x: () => -(wrapper.offsetWidth - window.innerWidth),
+                ease: "none",
+                duration: 1
             }
+        );
+
+        // Crear la escena de ScrollMagic
+        const scene = new ScrollMagic.Scene({
+            triggerElement: section,
+            triggerHook: 0,
+            duration: `${(panels.length - 1) * 100}%`,
+        })
+        .setPin(section)
+        .setTween(timeline)
+        .addTo(controller);
+
+        // Actualizar en resize
+        window.addEventListener('resize', () => {
+            scene.duration(`${(panels.length - 1) * 100}%`);
+            timeline.clear();
+            timeline.fromTo(wrapper,
+                { x: 0 },
+                {
+                    x: () => -(wrapper.offsetWidth - window.innerWidth),
+                    ease: "none",
+                    duration: 1
+                }
+            );
+            scene.refresh();
         });
-        
-        tl.to(wrapper, {
-            x: () => -(wrapper.offsetWidth - window.innerWidth),
-            ease: "none"
-        });
+
+        // Forzar actualización después de que todo esté listo
+        setTimeout(() => {
+            scene.refresh();
+            controller.update(true);
+        }, 100);
     });
 }
 
@@ -463,7 +468,6 @@ function init() {
                 
                 // Iniciar funcionalidades base
                 initHorizontalScroll();
-                ScrollTrigger.refresh();
                 
                 // Delay reducido a 0.5 segundos para todas las animaciones de UI
                 setTimeout(() => {
@@ -609,38 +613,48 @@ function updateProgressBar() {
         // Limitar el porcentaje entre 0 y 100
         const clampedPercentage = Math.max(0, Math.min(100, percentage));
         
-        // Actualizar posición del helper
-        gsap.to(progressHelper, {
-            left: `${clampedPercentage}%`,
-            duration: 0.1
-        });
+        // Actualizar posición del helper y barra de progreso inmediatamente
+        progressHelper.style.left = `${clampedPercentage}%`;
+        progressBar.style.width = `${clampedPercentage}%`;
 
-        // Actualizar barra de progreso
-        gsap.to(progressBar, {
-            width: `${clampedPercentage}%`,
-            duration: 0.1
-        });
-
-        // Aplicar scroll
+        // Calcular y aplicar el scroll inmediatamente
         const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
         const targetScroll = (clampedPercentage / 100) * totalHeight;
         
-        gsap.to(window, {
-            duration: 0.5,
-            scrollTo: {
-                y: targetScroll,
-                autoKill: false
-            },
-            ease: "power2.out"
+        // Scroll inmediato sin animación
+        window.scrollTo(0, targetScroll);
+
+        // Aplicar efectos visuales con GSAP para suavidad
+        requestAnimationFrame(() => {
+            gsap.to(progressHelper, {
+                left: `${clampedPercentage}%`,
+                duration: 0.1,
+                overwrite: true
+            });
+            
+            gsap.to(progressBar, {
+                width: `${clampedPercentage}%`,
+                duration: 0.1,
+                overwrite: true
+            });
         });
     }
 
-    // Event listeners en el helper en lugar del container
+    // Optimizar el evento de drag usando requestAnimationFrame
+    let rafId = null;
+    function optimizedDrag(e) {
+        if (rafId) {
+            cancelAnimationFrame(rafId);
+        }
+        rafId = requestAnimationFrame(() => drag(e));
+    }
+
+    // Usar el drag optimizado en los event listeners
     progressHelper.addEventListener('mousedown', startDragging);
     progressHelper.addEventListener('touchstart', startDragging, { passive: false });
     
-    window.addEventListener('mousemove', drag);
-    window.addEventListener('touchmove', drag, { passive: false });
+    window.addEventListener('mousemove', optimizedDrag);
+    window.addEventListener('touchmove', optimizedDrag, { passive: false });
     
     window.addEventListener('mouseup', stopDragging);
     window.addEventListener('touchend', stopDragging);
@@ -679,7 +693,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const preloaderText = document.querySelector('.preloader .scramble-text');
         if (!preloaderText) return;
 
-        const chars = "⌰⍜⋏☌ ⌰⟟⎐⟒ ⏁⊑⟒ ⟒⏁⊑⟒⍀⟒⏃⋏ ⟒⋔⌿⟟⍀⟒";
+        const chars = "⌰⍜⋏☌ ⌰⟟⎐⟒ ⏁⊑⟒ ⟒⏁⊑⟒⍀⏃⋏ ⟒⋔⌿⟟⍀⟒";
         
         function scramble(element, iteration = 0) {
             element.classList.remove('initially-hidden');
